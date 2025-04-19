@@ -1,5 +1,5 @@
 import c2 from "https://esm.sh/c2.js";
-import THREE from "https://cdn.jsdelivr.net/npm/three@0.175.0/+esm";
+//import * as THREE from "/build/three.module.js";
 
 document.body.style.margin = 0;
 document.body.style.overflow = `hidden`;
