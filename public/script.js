@@ -1,3 +1,5 @@
+import { drawStar } from "/drawStar.js";
+
 // document styling
 document.body.style.margin = 0;
 document.body.style.overflow = `hidden`;
@@ -10,8 +12,10 @@ cnv.height = window.innerHeight;
 const ctx = cnv.getContext(`2d`);
 
 // vars
-let particleArr;
+let particleArr = [];
+let starParticle;
 
+// MOUSE OBJ; tracks mouse x, y coord
 // grab mouse position
 let mouse = {
   x: null,
@@ -30,7 +34,7 @@ window.addEventListener("mousemove", function (event) {
 
 // CREATE PARTICLE CLASS
 class Particle {
-  constructor(x, y, dirX, dirY, size, colour, opacityCol) {
+  constructor(x, y, dirX, dirY, size, colour, npoint) {
     // x coordinate
     this.x = x;
     // y coordinate
@@ -43,15 +47,31 @@ class Particle {
     this.size = size;
     // particle colour
     this.colour = colour;
+    // number of points on star
+    this.n = npoint;
+
+    // star particle
+    this.starParticle = new drawStar(
+      this.x,
+      this.y,
+      this.size - 2,
+      this.size + 7,
+      this.n
+    );
+
+    // Configure star oscillation (customize as needed)
+    this.starParticle.setOscillation(0.7, 1.5, 0.2 + Math.random() * 0.6);
   }
 
   // method to draw an individual particle
   draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-    ctx.fillStyle = "rgb(243, 249, 210)";
-    //console.log(ctx.fillStyle);
-    ctx.fill();
+    ctx.fillStyle = this.colour;
+
+    // Update star position to match particle
+    this.starParticle.cx = this.x;
+    this.starParticle.cy = this.y;
+
+    this.starParticle.update();
   }
 
   // check particle pos, mouse pos, move the particle and draw
@@ -77,9 +97,9 @@ class Particle {
     // a^2 + b^2 = c^2
     let dist = Math.sqrt(dx * dx + dy * dy);
 
+    // checking that particle is far enough from edge of cvs
+    // or it'll get stuck
     if (dist < mouse.radius + this.size) {
-      // checking that particle is far enough from edge of cvs
-      // or it'll get stuck
       // allowing buffer area of particle size (this.size) * 10
       // if mouse is left of particle
       if (mouse.x < this.x && this.x < cnv.width - this.size * 10) {
@@ -112,7 +132,6 @@ class Particle {
 
 // FUNC TO RANDOMISE VALUES FOR PARTICLES
 function init() {
-  particleArr = [];
   // number of particles
   let numOf = (cnv.height * cnv.width) / 8000;
 
@@ -130,14 +149,16 @@ function init() {
     let dirX = Math.random() * (1.5 + 2.5) - 2.5;
     let dirY = Math.random() * (1.5 + 2.5) - 2.5;
 
-    // randomising alpha value
-    let opacityCol = Math.random() * (0.9 - 0.4) + 0.4;
     // colour
-    let colour = "rgb(243, 249, 210," + opacityCol + ")";
+    let colour = "rgb(243, 249, 210)";
+
+    // number of points on star
+    // random value between 7 and 15
+    let n = Math.random() * (15 - 7) + 7;
 
     // pushing a new instance of Particle with the above defined values
     // into particle array
-    particleArr.push(new Particle(x, y, dirX, dirY, size, colour));
+    particleArr.push(new Particle(x, y, dirX, dirY, size, colour, n));
   }
 }
 
@@ -159,8 +180,7 @@ function connect() {
       if (dist < (cnv.width / 5) * (cnv.height / 5)) {
         opacityVal = 0.7 - dist / 5000;
         ctx.strokeStyle = "rgba(51, 65, 57," + opacityVal + ")";
-        let sig = calcSignal();
-        ctx.lineWidth = 1 * sig;
+        ctx.lineWidth = 1;
         //console.log(ctx.lineWidth);
         ctx.beginPath();
         ctx.moveTo(particleArr[a].x, particleArr[a].y);
@@ -174,16 +194,18 @@ function connect() {
 // ANIMATION LOOP
 function animate() {
   requestAnimationFrame(animate);
+  // BACKGROUND STYLE
   // clearing previous frame
   ctx.clearRect(0, 0, innerWidth, innerHeight);
   //ctx.fillStyle = "rgb(255 141 161)";
   ctx.fillStyle = "rgb(183, 93, 105)";
   ctx.fillRect(0, 0, innerWidth, innerHeight);
 
-  // call update method for each individula particle
-  for (let i = 0; i < particleArr.length; i++) {
-    particleArr[i].update();
-  }
+  // update each star particle
+  particleArr.forEach((e) => {
+    e.update();
+  });
+
   connect();
 }
 
@@ -191,19 +213,6 @@ function animate() {
 init();
 // call animate
 animate();
-
-function calcSignal() {
-  const t = 1 / 1000;
-  const p = (t / 9) % 1;
-
-  // calculate triangle wave signal
-  let sig = 1 - Math.abs(p * 2 - 1) * 2;
-
-  // exponentiate signal
-  sig = sig ** (1 / 3);
-
-  return sig;
-}
 
 // web responsive
 onresize = () => {
