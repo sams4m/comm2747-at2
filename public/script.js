@@ -39,8 +39,8 @@ renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "-1";
 
 // set up orbit controls
-// const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableDamping = true;
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
 
 // ----------------------------------------------------------------------- //
 // sound
@@ -322,7 +322,8 @@ function animate() {
   shaderMaterial.uniforms.u_time.value = clock.getElapsedTime() * 0.001;
   renderer.render(scene, camera);
 
-  // controls.update();
+  // update orbit controls
+  controls.update();
 
   // update each star particle
   particleArr.forEach((e) => {
