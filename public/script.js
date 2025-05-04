@@ -106,7 +106,7 @@ class Particle {
     // set initial time using Three.js clock
     const startTime = clock.getElapsedTime() * 1000;
     // set first glitch to happen between 2 - 10 seconds from now
-    this.nextGlitchTime = startTime + (Math.random() * (10000 - 2000) + 2000);
+    this.nextGlitchTime = startTime + (Math.random() * (60000 - 2000) + 2000);
     // defined when glitching starts
     this.glitchEndTime = 0;
 
@@ -148,7 +148,7 @@ class Particle {
     }
   }
 
-  // glitch effect method
+  // METHOD: glitch effect
   glitchHandle() {
     // get current time in ms
     const currentTime = clock.getElapsedTime() * 1000;
@@ -162,7 +162,7 @@ class Particle {
         this.isGlitching = false;
         // set next glitch time in 2 - 10 seconds
         this.nextGlitchTime =
-          currentTime + (Math.random() * (10000 - 2000) + 2000);
+          currentTime + (Math.random() * (60000 - 2000) + 2000);
       }
     }
     // if not glitching - check if time to glitch
@@ -172,7 +172,7 @@ class Particle {
       this.isGlitching = true;
       // set glitch end time; random between 2 - 10 seconds
       this.glitchEndTime =
-        currentTime + (Math.random() * (10000 - 2000) + 2000);
+        currentTime + (Math.random() * (60000 - 2000) + 2000);
     }
   }
 
