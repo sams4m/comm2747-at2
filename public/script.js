@@ -19,7 +19,7 @@ const ctx = cnv.getContext(`2d`);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x7252dc);
 const camera = new THREE.PerspectiveCamera(
-  70,
+  50,
   cnv.width / cnv.height,
   0.01,
   10
@@ -37,7 +37,7 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
-renderer.domElement.style.zIndex = "0";
+renderer.domElement.style.zIndex = "-1";
 
 // set up orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
