@@ -63,8 +63,7 @@ gainNode.gain.value = 0.5;
 // ----------------------------------------------------------------------- //
 // GLOBAL VARS
 let particleArr = [],
-  coli = 0,
-  mesh;
+  coli = 0;
 
 // ----------------------------------------------------------------------- //
 // SHADER MATERIAL
@@ -238,9 +237,6 @@ class Particle {
 // ----------------------------------------------------------------------- //
 // INIT: RANDOMISE VALUES FOR PARTICLES
 function init() {
-  // Clear scene of previous meshes
-  if (mesh) scene.remove(mesh);
-
   // number of particles
   let numOf = (cnv.height * cnv.width) / 8000;
 
@@ -270,6 +266,8 @@ function init() {
   // // create a torus knot
   const geometry = new THREE.TorusKnotGeometry(5, 0.2, 100, 15, 14, 4);
   const mesh = new THREE.Mesh(geometry, shaderMaterial);
+  // Clear scene of previous meshes
+  if (mesh) scene.remove(mesh);
   scene.add(mesh);
 
   // create plane
