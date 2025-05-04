@@ -254,7 +254,7 @@ function init() {
   // number of particles
   let numOf = (cnv.height * cnv.width) / 8000;
 
-  initialiseParticles();
+  initialiseParticles(numOf);
 
   // // create a torus knot
   const geometry = new THREE.TorusKnotGeometry(5, 3, 40, 15, 14, 4);
@@ -401,7 +401,7 @@ cnv.addEventListener("click", function cnvClicked() {
 });
 
 // FUNC: INITIALISE PARTICLES
-function initialiseParticles() {
+function initialiseParticles(numOf) {
   for (let i = 0; i < numOf; i++) {
     // size of particle = random val between 1 & 5
     let size = Math.random() * (5 - 1) + 1;
