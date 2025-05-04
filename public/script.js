@@ -33,7 +33,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // styling
-//renderer.domElement.style.position = "absolute";
+renderer.domElement.style.position = "relative";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "-1";
