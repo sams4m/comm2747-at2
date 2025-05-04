@@ -368,8 +368,6 @@ window.addEventListener("mouseout", function (mouse_event) {
 
 // ----------------------------------------------------------------------- //
 // CLICK EVENT HANDLER
-// new var to hold new colour index
-let newColi;
 cnv.addEventListener("click", function cnvClicked() {
   console.log("screen clicked");
   // COLOUR
@@ -434,25 +432,6 @@ function connect() {
 }
 
 // ----------------------------------------------------------------------- //
-// FUNC: RANDOM COLOUR INDEX
-function coliRandomiser(i) {
-  // compute random colour index
-  let newColi = Math.floor(Math.random() * colours.length);
-
-  // if the new random index == the current index number
-  // call the function again to get a new random index number
-  // that is different
-  if (newColi == i) {
-    console.log("call recursive");
-    return coliRandomiser(newColi);
-  } else {
-    // return new random index
-    //randCol= r;
-    return newColi;
-  }
-}
-
-// ----------------------------------------------------------------------- //
 // FUNC: GLOBAL ANIMATION GLITCH HANDLE
 function globalGlitchHandle() {
   // get current time in ms
@@ -496,8 +475,29 @@ function globalGlitchHandle() {
 
     // setting random background colour
     glitchCol = coliRandomiser(glitchCol);
+    console.log(glitchCol);
 
     // set a random end time between 500ms-2s
     globalGlitchEndTime = currentTime + (Math.random() * (2000 - 500) + 500);
+  }
+}
+
+// ----------------------------------------------------------------------- //
+// FUNC: RANDOM COLOUR INDEX
+function coliRandomiser(i) {
+  // compute random colour index
+  // new var to hold new colour index
+  let newColi = Math.floor(Math.random() * colours.length);
+
+  // if the new random index == the current index number
+  // call the function again to get a new random index number
+  // that is different
+  if (newColi == i) {
+    console.log("call recursive");
+    return coliRandomiser(i);
+  } else {
+    // return new random index
+    //randCol= r;
+    return newColi;
   }
 }
