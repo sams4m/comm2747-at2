@@ -1,5 +1,9 @@
 import { drawStar } from "/drawStar.js";
 
+const cnv = document.getElementById(`canvas`);
+cnv.width = window.innerWidth;
+cnv.height = window.innerHeight;
+
 // CLASS: PARTICLE
 class Particle {
   constructor(x, y, dirX, dirY, size, npoint) {
