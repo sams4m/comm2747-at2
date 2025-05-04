@@ -464,9 +464,9 @@ function globalGlitchHandle() {
       // re-initialize everything
       init();
 
-      // Set next global glitch time - random val between 30-90 seconds
+      // Set next global glitch time - random val between 15-30 seconds
       nextGlobalGlitchTime =
-        currentTime + (Math.random() * (90000 - 30000) + 30000);
+        currentTime + (Math.random() * (30000 - 15000) + 15000);
     }
   }
   // if not in a global glitch state
@@ -477,7 +477,7 @@ function globalGlitchHandle() {
     // set glitch event to true
     globalGlitchEvent = true;
 
-    // set a random end time between 500-1500ms
-    globalGlitchEndTime = currentTime + (Math.random() * (1500 - 500) + 500);
+    // set a random end time between 500ms-2s
+    globalGlitchEndTime = currentTime + (Math.random() * (2000 - 500) + 500);
   }
 }
