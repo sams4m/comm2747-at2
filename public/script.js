@@ -63,7 +63,8 @@ gainNode.gain.value = 0.5;
 // ----------------------------------------------------------------------- //
 // GLOBAL VARS
 let particleArr = [],
-  coli = 0;
+  coli = 0,
+  mesh;
 
 // ----------------------------------------------------------------------- //
 // SHADER MATERIAL
@@ -265,7 +266,7 @@ function init() {
 
   // // create a torus knot
   const geometry = new THREE.TorusKnotGeometry(5, 0.2, 100, 15, 14, 4);
-  const mesh = new THREE.Mesh(geometry, shaderMaterial);
+  mesh = new THREE.Mesh(geometry, shaderMaterial);
   // Clear scene of previous meshes
   if (mesh) scene.remove(mesh);
   scene.add(mesh);
