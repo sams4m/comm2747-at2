@@ -149,6 +149,16 @@ class Particle {
     // number of points on star
     this.n = npoint;
 
+    // lifespan properties
+    // random lifespan between 5-10 seconds
+    this.maxLifespan = Math.random() * 5000 + 5000;
+    // current lifespan
+    this.lifespan = this.maxLifespan;
+    // visibility - start fully visible
+    this.opacity = 1.0;
+    // tracking if particle is dead
+    this.isDead = false;
+
     // star particle
     this.starParticle = new drawStar(
       this.x,
@@ -180,7 +190,10 @@ class Particle {
   }
 
   // check particle pos, mouse pos, move the particle and draw
-  update() {
+  update(t) {
+    // decrease lifespan based on elapsed time
+    this.lifespan -= t;
+
     // check particle is still within canvas
     if (this.x > cnv.width || this.x < 0) {
       // turn direction around
@@ -241,28 +254,7 @@ function init() {
   // number of particles
   let numOf = (cnv.height * cnv.width) / 8000;
 
-  for (let i = 0; i < numOf; i++) {
-    // size of particle = random val between 1 & 5
-    let size = Math.random() * (5 - 1) + 1;
-    // x coord = random value between 0 and cnv width
-    // with size * 2 as buffer so it doesn't get stuck
-    let x =
-      Math.random() * (cnv.width - size * 2 - (0 + size * 2)) + 0 + size * 2;
-    let y =
-      Math.random() * (cnv.height - size * 2 - (0 + size * 2)) + 0 + size * 2;
-
-    // particle movement speed between -0.5 and 0.5
-    let dirX = Math.random() * (1 + 0.5) - 0.5;
-    let dirY = Math.random() * (1 + 0.5) - 0.5;
-
-    // number of points on star
-    // random value between 7 and 15
-    let n = Math.random() * (15 - 7) + 7;
-
-    // pushing a new instance of Particle with the above defined values
-    // into particle array
-    particleArr.push(new Particle(x, y, dirX, dirY, size, n));
-  }
+  initialiseParticles();
 
   // // create a torus knot
   const geometry = new THREE.TorusKnotGeometry(5, 3, 40, 15, 14, 4);
@@ -287,8 +279,12 @@ function connect() {
   let opacityVal = 0.7;
   // go through every particle
   for (let a = 0; a < particleArr.length; a++) {
+    // skip dead particle
+    if (particleArr[a].isDead === true) continue;
     // going through consecutive particles in array
     for (let b = 0; b < particleArr.length; b++) {
+      // skip dead particle
+      if (a === b || particleArr[b].isDead) continue;
       let dist =
         (particleArr[a].x - particleArr[b].x) *
           (particleArr[a].x - particleArr[b].x) +
@@ -322,6 +318,7 @@ function animate() {
   //   ctx.fillStyle = "#7252DC";
   //   ctx.fillRect(0, 0, innerWidth, innerHeight);
 
+  const t = clock.getElapsedTime();
   // Rotate three.js scene
   if (mesh) {
     mesh.rotation.x += 0.005;
@@ -345,6 +342,15 @@ function animate() {
   connect();
 
   requestAnimationFrame(animate);
+}
+
+// if all particles are dead, initialise particles
+if (
+  particleArr.forEach((e) => {
+    particleArr[e].isDead === true;
+  })
+) {
+  initialiseParticles();
 }
 
 // call init fill array with randomised particles
@@ -393,6 +399,33 @@ cnv.addEventListener("click", function cnvClicked() {
     gainNode.gain.value = soundRatio;
   }
 });
+
+// FUNC: INITIALISE PARTICLES
+function initialiseParticles() {
+  for (let i = 0; i < numOf; i++) {
+    // size of particle = random val between 1 & 5
+    let size = Math.random() * (5 - 1) + 1;
+    // x coord = random value between 0 and cnv width
+    // with size * 2 as buffer so it doesn't get stuck
+    let x =
+      Math.random() * (cnv.width - size * 2 - (0 + size * 2)) + 0 + size * 2;
+    let y =
+      Math.random() * (cnv.height - size * 2 - (0 + size * 2)) + 0 + size * 2;
+
+    // particle movement speed between -0.5 and 0.5
+    let dirX = Math.random() * (1 + 0.5) - 0.5;
+    let dirY = Math.random() * (1 + 0.5) - 0.5;
+
+    // number of points on star
+    // random value between 7 and 15
+    let n = Math.random() * (15 - 7) + 7;
+
+    // pushing a new instance of Particle with the above defined values
+    // into particle array
+    particleArr.push(new Particle(x, y, dirX, dirY, size, n));
+  }
+  return;
+}
 
 // FUNC: RANDOM COLOUR INDEX
 function coliRandomiser() {
