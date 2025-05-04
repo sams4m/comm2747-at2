@@ -39,10 +39,6 @@ renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "-1";
 
-// set up orbit controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-
 // ----------------------------------------------------------------------- //
 // sound
 const audioContext = new AudioContext();
@@ -179,7 +175,7 @@ class Particle {
   // check particle pos, mouse pos, move the particle and draw
   update() {
     // call glitch handle method
-    glitchHandle(this.isGlitching, this.glitchEndTime, this.nextGlitchTime);
+    glitchHandle();
 
     // check particle is still within canvas
     if (this.x > cnv.width || this.x < 0) {
@@ -324,9 +320,6 @@ function animate() {
   shaderMaterial.uniforms.u_time.value = clock.getElapsedTime();
   // render scene
   renderer.render(scene, camera);
-
-  // update orbit controls
-  controls.update();
 
   // update each star particle
   particleArr.forEach((e) => {

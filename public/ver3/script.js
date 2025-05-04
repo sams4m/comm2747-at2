@@ -179,7 +179,7 @@ class Particle {
   // check particle pos, mouse pos, move the particle and draw
   update() {
     // call glitch handle method
-    glitchHandle(this.isGlitching, this.glitchEndTime, this.nextGlitchTime);
+    glitchHandle();
 
     // check particle is still within canvas
     if (this.x > cnv.width || this.x < 0) {
