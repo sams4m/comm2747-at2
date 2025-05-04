@@ -1,7 +1,7 @@
 import { drawStar } from "/drawStar.js";
 import { colours } from "./colour.js";
 import * as THREE from "/three.js";
-import { OrbitControls } from "./OrbitControls.js";
+import { OrbitControls } from "/OrbitControls.js";
 
 // document styling
 document.body.style.margin = 0;
@@ -35,6 +35,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // const controls = new OrbitControls(camera, renderer.domElement);
 // controls.enableDamping = true;
 
+// ----------------------------------------------------------------------- //
 // sound
 const audioContext = new AudioContext();
 // suspend until click
@@ -42,7 +43,7 @@ audioContext.suspend();
 // volume controls
 const gainNode = audioContext.createGain();
 // audio
-const audioE = new Audio("weird.wav");
+const audioE = new Audio("/weird.wav");
 audioE.load();
 const source = audioContext.createMediaElementSource(audioE);
 // connect audio element to gain node
