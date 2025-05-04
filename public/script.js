@@ -307,8 +307,7 @@ function animate() {
 
   // if global glitch is active
   if (globalGlitchEvent === true) {
-    // setting background as random colour
-    glitchCol = coliRandomiser(glitchCol);
+    // screen colour
     // clearing rect frame
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     // colour
@@ -494,6 +493,9 @@ function globalGlitchHandle() {
     console.log("global glitch true");
     // set glitch event to true
     globalGlitchEvent = true;
+
+    // setting random background colour
+    glitchCol = coliRandomiser(glitchCol);
 
     // set a random end time between 500ms-2s
     globalGlitchEndTime = currentTime + (Math.random() * (2000 - 500) + 500);
