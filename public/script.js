@@ -265,16 +265,16 @@ function init() {
   }
 
   // // create a torus knot
-  const geometry = new THREE.TorusKnotGeometry(5, 0.2, 45, 15, 14, 4);
-  mesh = new THREE.Mesh(geometry, shaderMaterial);
-  // Clear scene of previous meshes
-  if (mesh) scene.remove(mesh);
-  scene.add(mesh);
+  //   const geometry = new THREE.TorusKnotGeometry(5, 0.2, 45, 15, 14, 4);
+  //   mesh = new THREE.Mesh(geometry, shaderMaterial);
+  //   // Clear scene of previous meshes
+  //   if (mesh) scene.remove(mesh);
+  //   scene.add(mesh);
 
   // create plane
-  //   const geometry = new THREE.PlaneGeometry(1.6, 0.9);
-  //   const mesh = new THREE.Mesh(geometry, shaderMaterial);
-  //   scene.add(mesh);
+  const geometry = new THREE.PlaneGeometry(1.6, 0.9);
+  const mesh = new THREE.Mesh(geometry, shaderMaterial);
+  scene.add(mesh);
 
   // add light
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
