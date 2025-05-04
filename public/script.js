@@ -348,7 +348,7 @@ animate();
 onresize = () => {
   cnv.width = innerWidth;
   cnv.height = innerHeight;
-  mouse.radius = (cnv.height / 200) * (cnv.width / 200);
+  mouse.radius = (cnv.height / 170) * (cnv.width / 170);
 
   // Update renderer and camera
   renderer.setSize(window.innerWidth, window.innerHeight);
