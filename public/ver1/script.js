@@ -149,7 +149,7 @@ class Particle {
       this.n
     );
 
-    // Configure star oscillation (customize as needed)
+    // Configure star oscillation
     this.starParticle.setOscillation(
       0.7,
       Math.random() * (3 - 2.5) + 2.5,
