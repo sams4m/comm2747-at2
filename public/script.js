@@ -61,7 +61,8 @@ gainNode.gain.value = 0.5;
 // GLOBAL VARS
 let particleArr = [],
   coli = 0,
-  mesh;
+  mesh,
+  glitchCol;
 
 // global glitch vars
 // set default as not glitching
@@ -325,11 +326,11 @@ function animate() {
   // if global glitch is active
   if (globalGlitchEvent === true) {
     // setting background as random colour
-    const i = Math.floor(Math.random() * colours.length);
+    glitchCol = coliRandomiser();
     // clearing rect frame
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     // colour
-    ctx.fillStyle = colours[i];
+    ctx.fillStyle = colours[glitchCol];
     // draw rect
     ctx.fillRect(0, 0, innerWidth, innerHeight);
   }
@@ -398,6 +399,7 @@ cnv.addEventListener("click", function cnvClicked() {
   // GLITCH (20% CHANCE)
 
   if (Math.random() < 0.2 && !globalGlitchEvent) {
+    console.log("glitch is true");
     // start glitch
     globalGlitchEvent = true;
     // set a random end time between 500-1500ms
