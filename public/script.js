@@ -60,9 +60,11 @@ gainNode.connect(audioContext.destination);
 // preset value ; set at 50%
 gainNode.gain.value = 0.5;
 
-// vars
-let particleArr = [];
-let coli = 0;
+// ----------------------------------------------------------------------- //
+// GLOBAL VARS
+let particleArr = [],
+  coli = 0,
+  mesh;
 
 // ----------------------------------------------------------------------- //
 // SHADER MATERIAL
@@ -236,6 +238,9 @@ class Particle {
 // ----------------------------------------------------------------------- //
 // INIT: RANDOMISE VALUES FOR PARTICLES
 function init() {
+  // Clear scene of previous meshes
+  if (mesh) scene.remove(mesh);
+
   // number of particles
   let numOf = (cnv.height * cnv.width) / 8000;
 
@@ -263,7 +268,7 @@ function init() {
   }
 
   // // create a torus knot
-  const geometry = new THREE.TorusKnotGeometry(5, 4.7, 41, 15, 14, 4);
+  const geometry = new THREE.TorusKnotGeometry(5, 0.2, 100, 15, 14, 4);
   const mesh = new THREE.Mesh(geometry, shaderMaterial);
   scene.add(mesh);
 
@@ -272,9 +277,9 @@ function init() {
   //   const mesh = new THREE.Mesh(geometry, shaderMaterial);
   //   scene.add(mesh);
 
-  // // add light
-  // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  // scene.add(ambientLight);
+  // add light
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
 }
 
 // FUNC: CONNECT
@@ -318,8 +323,15 @@ function animate() {
   //   ctx.fillStyle = "#7252DC";
   //   ctx.fillRect(0, 0, innerWidth, innerHeight);
 
+  // Rotate three.js scene
+  if (mesh) {
+    mesh.rotation.x += 0.005;
+    mesh.rotation.y += 0.01;
+  }
+
   // shader update
-  shaderMaterial.uniforms.u_time.value = clock.getElapsedTime() * 0.001;
+  shaderMaterial.uniforms.u_time.value = clock.getElapsedTime();
+  // render scene
   renderer.render(scene, camera);
 
   // update orbit controls
@@ -348,7 +360,11 @@ onresize = () => {
   cnv.height = innerHeight;
   mouse.radius = (cnv.height / 200) * (cnv.width / 200);
 
+  // Update renderer and camera
   renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
   init();
 };
 
