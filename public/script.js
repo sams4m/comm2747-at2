@@ -178,6 +178,15 @@ class Particle {
 
   // method to draw an individual particle
   draw() {
+    // Calculate opacity based on remaining lifespan
+    this.opacity = this.lifespan / this.maxLifespan;
+
+    // colour with opacity
+    let colour = "#" + colours[coli];
+    let r = parseInt(colour.slice(1, 3), 16);
+    let g = parseInt(colour.slice(3, 5), 16);
+    let b = parseInt(colour.slice(5, 7), 16);
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${this.opacity})`;
     // colour
     let colour = "#" + colours[coli];
     ctx.fillStyle = colour;
