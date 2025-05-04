@@ -63,6 +63,15 @@ let particleArr = [],
   coli = 0,
   mesh;
 
+// global glitch vars
+// set default as not glitching
+let globalGlitchEvent = false;
+// glitch in 10-25 seconds
+let nextGlobalGlitchTime =
+  clock.getElapsedTime() * 1000 + (Math.random() * 15000 + 10000);
+// initialise end time = 0
+let globalGlitchEndTime = 0;
+
 // MOUSE OBJ; tracks mouse x, y coord
 // grab mouse position
 let mouse = {
@@ -310,6 +319,21 @@ function connect() {
 
 // ANIMATION LOOP
 function animate() {
+  // call to check global glitch
+  globalGlitchHandle();
+
+  // if global glitch is active
+  if (globalGlitchEvent === true) {
+    // setting background as random colour
+    const i = Math.floor(Math.random() * colours.length);
+    // clearing rect frame
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    // colour
+    ctx.fillStyle = colours[i];
+    // draw rect
+    ctx.fillRect(0, 0, innerWidth, innerHeight);
+  }
+
   // Rotate three.js scene
   if (mesh) {
     mesh.rotation.x += 0.005;
@@ -352,6 +376,7 @@ onresize = () => {
   init();
 };
 
+// ----------------------------------------------------------------------- //
 // mouse out event
 // particles stop trying to interact with mouse when it leaves canvas
 window.addEventListener("mouseout", function (mouse_event) {
@@ -359,6 +384,8 @@ window.addEventListener("mouseout", function (mouse_event) {
   mouse.y = undefined;
 });
 
+// ----------------------------------------------------------------------- //
+// CLICK EVENT HANDLER
 // new var to hold new colour index
 let newColi;
 cnv.addEventListener("click", function cnvClicked() {
@@ -367,6 +394,16 @@ cnv.addEventListener("click", function cnvClicked() {
   // change colour index
   coli = coliRandomiser();
   console.log(coli);
+
+  // GLITCH (20% CHANCE)
+
+  if (Math.random() < 0.2 && !globalGlitchEvent) {
+    // start glitch
+    globalGlitchEvent = true;
+    // set a random end time between 500-1500ms
+    globalGlitchEndTime =
+      clock.getElapsedTime() * 1000 + (Math.random() * (1500 - 500) + 500);
+  }
 
   // SOUND
   if (audioContext.state == "suspended") {
@@ -379,6 +416,7 @@ cnv.addEventListener("click", function cnvClicked() {
   }
 });
 
+// ----------------------------------------------------------------------- //
 // FUNC: RANDOM COLOUR INDEX
 function coliRandomiser() {
   // compute random colour index
@@ -394,5 +432,49 @@ function coliRandomiser() {
     // return new random index
     //randCol= r;
     return newColi;
+  }
+}
+
+// ----------------------------------------------------------------------- //
+// FUNC: GLOBAL ANIMATION GLITCH HANDLE
+function globalGlitchHandle() {
+  // get current time in ms
+  const currentTime = clock.getElapsedTime() * 1000;
+
+  // If glitch is active
+  if (globalGlitchEvent === true) {
+    // check if glitch should end
+    // if current time is greater than end time
+    if (currentTime > globalGlitchEndTime) {
+      // set glitch to false
+      globalGlitchEvent = false;
+
+      // restart the animation
+      console.log("restarting animation");
+
+      // clear particle array
+      particleArr = [];
+
+      // Clear scene
+      if (mesh) scene.remove(mesh);
+
+      // re-initialize everything
+      init();
+
+      // Set next global glitch time - random val between 30-90 seconds
+      nextGlobalGlitchTime =
+        currentTime + (Math.random() * (90000 - 30000) + 30000);
+    }
+  }
+  // if not in a global glitch state
+  // check if current time is more than next glitch time
+  // meaning it should be glitching
+  else if (currentTime > nextGlobalGlitchTime) {
+    console.log("global glitch true");
+    // set glitch event to true
+    globalGlitchEvent = true;
+
+    // set a random end time between 500-1500ms
+    globalGlitchEndTime = currentTime + (Math.random() * (1500 - 500) + 500);
   }
 }
