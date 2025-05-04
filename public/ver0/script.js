@@ -185,7 +185,6 @@ function init() {
     // into particle array
     particleArr.push(new Particle(x, y, dirX, dirY, size, n));
   }
-
 }
 
 // FUNC: CONNECT
@@ -223,11 +222,11 @@ function connect() {
 // ANIMATION LOOP
 function animate() {
   // BACKGROUND STYLE
-  clearing previous frame
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    //ctx.fillStyle = "rgb(255 141 161)";
-    ctx.fillStyle = "#7252DC";
-    ctx.fillRect(0, 0, innerWidth, innerHeight);
+  //clearing previous frame
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  //ctx.fillStyle = "rgb(255 141 161)";
+  ctx.fillStyle = "#7252DC";
+  ctx.fillRect(0, 0, innerWidth, innerHeight);
 
   // update each star particle
   particleArr.forEach((e) => {
