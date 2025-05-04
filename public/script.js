@@ -458,6 +458,9 @@ function globalGlitchHandle() {
       // Clear scene
       if (mesh) scene.remove(mesh);
 
+      // clear 2d ctx
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+
       // re-initialize everything
       init();
 
