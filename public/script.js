@@ -265,7 +265,7 @@ function init() {
   }
 
   // // create a torus knot
-  const geometry = new THREE.TorusKnotGeometry(5, 0.2, 100, 15, 14, 4);
+  const geometry = new THREE.TorusKnotGeometry(5, 0.2, 45, 15, 14, 4);
   mesh = new THREE.Mesh(geometry, shaderMaterial);
   // Clear scene of previous meshes
   if (mesh) scene.remove(mesh);
