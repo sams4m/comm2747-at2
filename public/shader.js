@@ -1,3 +1,5 @@
+import * as THREE from "/three.js";
+
 // SHADER MATERIAL
 const shaderMaterial = new THREE.ShaderMaterial({
   uniforms: {
