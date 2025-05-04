@@ -311,7 +311,7 @@ function animate() {
     // clearing rect frame
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     // colour
-    ctx.fillStyle = colours[glitchCol];
+    ctx.fillStyle = "#" + colours[glitchCol];
     // draw rect
     ctx.fillRect(0, 0, innerWidth, innerHeight);
   }
