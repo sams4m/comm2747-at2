@@ -188,13 +188,13 @@ class Particle {
     // means should be glitching
     else if (currentTime > this.nextGlitchTime) {
       this.isGlitching = true;
-      // set glitch end time; random between 2 - 10 seconds
+      // set glitch to randomly end in 2 - 6 seconds
       this.glitchEndTime =
         currentTime + (Math.random() * (60000 - 2000) + 2000);
     }
   }
 
-  // check particle pos, mouse pos, move the particle and draw
+  // check glitch status, particle pos, mouse pos, move the particle and draw
   update() {
     // call glitch handle method
     this.glitchHandle();
@@ -254,11 +254,13 @@ class Particle {
 }
 
 // ----------------------------------------------------------------------- //
-// INIT: RANDOMISE VALUES FOR PARTICLES
+// INITIALISE
 function init() {
   // number of particles
-  let numOf = (cnv.height * cnv.width) / 8000;
+  let numOf = (cnv.height * cnv.width) / 7000;
 
+  // loop to create values to create instaces of Particle to push into array
+  // till num of particles reached
   for (let i = 0; i < numOf; i++) {
     // size of particle = random val between 1 & 5
     let size = Math.random() * (5 - 1) + 1;
@@ -282,11 +284,14 @@ function init() {
     particleArr.push(new Particle(x, y, dirX, dirY, size, n));
   }
 
-  // // create a torus knot
+  // BACKGROUND
+  // create a torus knot
   const geometry = new THREE.TorusKnotGeometry(5, 3, 40, 15, 14, 4);
-  mesh = new THREE.Mesh(geometry, shaderMaterial);
-  // Clear scene of previous meshes
+  // Clear scene of previous meshes if filled
   if (mesh) scene.remove(mesh);
+  // create new instance of mesh with torus knot and shader
+  mesh = new THREE.Mesh(geometry, shaderMaterial);
+  // add the mesh to scene
   scene.add(mesh);
 
   // add light
@@ -294,42 +299,7 @@ function init() {
   scene.add(ambientLight);
 }
 
-// FUNC: CONNECT
-// checking if particles are close enough to connect
-function connect() {
-  let opacityVal = 0.7;
-  // go through every particle
-  for (let a = 0; a < particleArr.length; a++) {
-    // if star is glitching skip
-    if (particleArr[a].isGlitching) continue;
-    // going through consecutive particles in array
-    for (let b = 0; b < particleArr.length; b++) {
-      // if star is glitching skip
-      if (particleArr[b].isGlitching) continue;
-      let dist =
-        (particleArr[a].x - particleArr[b].x) *
-          (particleArr[a].x - particleArr[b].x) +
-        (particleArr[a].y - particleArr[b].y) *
-          (particleArr[a].y - particleArr[b].y);
-
-      // the smaller the number, the longer the lines,
-      // the more particles connected
-      if (dist < (cnv.width / 2) * (cnv.height / 2)) {
-        opacityVal = 0.7 - dist / 9000;
-        ctx.strokeStyle = "rgba(51, 65, 57," + opacityVal + ")";
-        ctx.lineWidth = 1;
-        //console.log(ctx.lineWidth);
-        ctx.beginPath();
-        ctx.moveTo(particleArr[a].x, particleArr[a].y);
-        ctx.lineTo(particleArr[b].x, particleArr[b].y);
-        ctx.stroke();
-      }
-    }
-  }
-}
-
 // ----------------------------------------------------------------------- //
-
 // ANIMATION LOOP
 function animate() {
   // call to check global glitch
@@ -409,7 +379,6 @@ cnv.addEventListener("click", function cnvClicked() {
   console.log(coli);
 
   // GLITCH (20% CHANCE)
-
   if (Math.random() < 0.2 && !globalGlitchEvent) {
     console.log("glitch is true");
     // start glitch
@@ -429,6 +398,41 @@ cnv.addEventListener("click", function cnvClicked() {
     gainNode.gain.value = soundRatio;
   }
 });
+
+// ----------------------------------------------------------------------- //
+// FUNC: CONNECT
+// checking if particles are close enough to connect
+function connect() {
+  let opacityVal = 0.7;
+  // go through every particle
+  for (let a = 0; a < particleArr.length; a++) {
+    // if star is glitching skip
+    if (particleArr[a].isGlitching) continue;
+    // going through consecutive particles in array
+    for (let b = 0; b < particleArr.length; b++) {
+      // if star is glitching skip
+      if (particleArr[b].isGlitching) continue;
+      let dist =
+        (particleArr[a].x - particleArr[b].x) *
+          (particleArr[a].x - particleArr[b].x) +
+        (particleArr[a].y - particleArr[b].y) *
+          (particleArr[a].y - particleArr[b].y);
+
+      // the smaller the number, the longer the lines,
+      // the more particles connected
+      if (dist < (cnv.width / 2) * (cnv.height / 2)) {
+        opacityVal = 0.7 - dist / 9000;
+        ctx.strokeStyle = "rgba(51, 65, 57," + opacityVal + ")";
+        ctx.lineWidth = 1;
+        //console.log(ctx.lineWidth);
+        ctx.beginPath();
+        ctx.moveTo(particleArr[a].x, particleArr[a].y);
+        ctx.lineTo(particleArr[b].x, particleArr[b].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
 
 // ----------------------------------------------------------------------- //
 // FUNC: RANDOM COLOUR INDEX
