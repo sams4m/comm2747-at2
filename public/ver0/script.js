@@ -89,7 +89,7 @@ class Particle {
   // method to draw an individual particle
   draw() {
     // colour
-    let colour = "#" + colours[coli];
+    let colour = "#" + colours[1];
     ctx.fillStyle = colour;
 
     // Update star position to match particle
@@ -258,41 +258,3 @@ window.addEventListener("mouseout", function (mouse_event) {
   mouse.x = undefined;
   mouse.y = undefined;
 });
-
-// new var to hold new colour index
-let newColi;
-cnv.addEventListener("click", function cnvClicked() {
-  console.log("screen clicked");
-  // COLOUR
-  // change colour index
-  coli = coliRandomiser();
-  console.log(coli);
-
-  // SOUND
-  if (audioContext.state == "suspended") {
-    audioContext.resume();
-  } else {
-    audioE.play();
-    let soundRatio = mouse.x / cnv.width;
-
-    gainNode.gain.value = soundRatio;
-  }
-});
-
-// FUNC: RANDOM COLOUR INDEX
-function coliRandomiser() {
-  // compute random colour index
-  newColi = Math.floor(Math.random() * colours.length);
-
-  // if the new random index == the current index number
-  // call the function again to get a new random index number
-  // that is different
-  if (newColi == coli) {
-    console.log("call recursive");
-    return coliRandomiser();
-  } else {
-    // return new random index
-    //randCol= r;
-    return newColi;
-  }
-}
