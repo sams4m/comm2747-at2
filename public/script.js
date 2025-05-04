@@ -88,7 +88,7 @@ let mouse = {
   y: null,
   // the radius will give the particles an area around the
   // mouse which they interact/react with
-  radius: (cnv.height / 200) * (cnv.width / 200),
+  radius: (cnv.height / 100) * (cnv.width / 100),
 };
 
 // event listener will fire every time the mouse moves and
