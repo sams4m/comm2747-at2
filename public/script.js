@@ -380,6 +380,9 @@ cnv.addEventListener("click", function cnvClicked() {
     console.log("glitch is true");
     // start glitch
     globalGlitchEvent = true;
+    // setting random background colour
+    glitchCol = coliRandomiser(glitchCol);
+    console.log(glitchCol);
     // set a random end time between 500-1500ms
     globalGlitchEndTime =
       clock.getElapsedTime() * 1000 + (Math.random() * (1500 - 500) + 500);
