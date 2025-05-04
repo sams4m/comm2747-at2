@@ -1,6 +1,7 @@
 import { drawStar } from "/drawStar.js";
 import { colours } from "./colour.js";
 import * as THREE from "/three.js";
+import { OrbitControls } from "./OrbitControls.js";
 
 // document styling
 document.body.style.margin = 0;
@@ -29,8 +30,27 @@ const clock = new THREE.Clock();
 // Setup renderer
 // size of renderer
 renderer.setSize(window.innerWidth, window.innerHeight);
-// adding renderer to dom
-document.body.appendChild(renderer.domElement);
+
+// set up orbit controls
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableDamping = true;
+
+// sound
+const audioContext = new AudioContext();
+// suspend until click
+audioContext.suspend();
+// volume controls
+const gainNode = audioContext.createGain();
+// audio
+const audioE = new Audio("weird.wav");
+audioE.load();
+const source = audioContext.createMediaElementSource(audioE);
+// connect audio element to gain node
+source.connect(gainNode);
+// Connect Gain Node to Destination
+gainNode.connect(audioContext.destination);
+// preset value ; set at 50%
+gainNode.gain.value = 0.5;
 
 // vars
 let particleArr = [];
@@ -84,10 +104,6 @@ const shaderMaterial = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
 });
 
-// Create plane that fills the screen
-const planeGeometry = new THREE.PlaneGeometry(2, 2);
-const plane = new THREE.Mesh(planeGeometry, shaderMaterial);
-scene.add(plane);
 // ----------------------------------------------------------------------- //
 // MOUSE OBJ; tracks mouse x, y coord
 // grab mouse position
@@ -109,7 +125,7 @@ window.addEventListener("mousemove", function (event) {
 // ----------------------------------------------------------------------- //
 // CLASS: PARTICLE
 class Particle {
-  constructor(x, y, dirX, dirY, size, colour, npoint) {
+  constructor(x, y, dirX, dirY, size, npoint) {
     // x coordinate
     this.x = x;
     // y coordinate
@@ -120,8 +136,6 @@ class Particle {
     this.dirY = dirY;
     // particle size
     this.size = size;
-    // particle colour
-    this.colour = colour;
     // number of points on star
     this.n = npoint;
 
@@ -135,12 +149,18 @@ class Particle {
     );
 
     // Configure star oscillation (customize as needed)
-    this.starParticle.setOscillation(0.7, 1.5, 0.2 + Math.random() * 0.6);
+    this.starParticle.setOscillation(
+      0.7,
+      Math.random() * (3 - 2.5) + 2.5,
+      0.2 + Math.random() * 0.6
+    );
   }
 
   // method to draw an individual particle
   draw() {
-    ctx.fillStyle = this.colour;
+    // colour
+    let colour = "#" + colours[coli];
+    ctx.fillStyle = colour;
 
     // Update star position to match particle
     this.starParticle.cx = this.x;
@@ -221,12 +241,9 @@ function init() {
     let y =
       Math.random() * (cnv.height - size * 2 - (0 + size * 2)) + 0 + size * 2;
 
-    // particle movement speed between -2.5 and 1.5
-    let dirX = Math.random() * (1.5 + 2.5) - 2.5;
-    let dirY = Math.random() * (1.5 + 2.5) - 2.5;
-
-    // colour
-    let colour = "#" + colours[coli];
+    // particle movement speed between -0.5 and 0.5
+    let dirX = Math.random() * (1 + 0.5) - 0.5;
+    let dirY = Math.random() * (1 + 0.5) - 0.5;
 
     // number of points on star
     // random value between 7 and 15
@@ -234,14 +251,28 @@ function init() {
 
     // pushing a new instance of Particle with the above defined values
     // into particle array
-    particleArr.push(new Particle(x, y, dirX, dirY, size, colour, n));
+    particleArr.push(new Particle(x, y, dirX, dirY, size, n));
   }
+
+  // // create a torus knot
+  const geometry = new THREE.TorusKnotGeometry(5, 4.7, 41, 15, 14, 4);
+  const mesh = new THREE.Mesh(geometry, shaderMaterial);
+  scene.add(mesh);
+
+  // create plane
+  //   const geometry = new THREE.PlaneGeometry(1.6, 0.9);
+  //   const mesh = new THREE.Mesh(geometry, shaderMaterial);
+  //   scene.add(mesh);
+
+  // // add light
+  // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  // scene.add(ambientLight);
 }
 
 // FUNC: CONNECT
 // checking if particles are close enough to connect
 function connect() {
-  let opacityVal = 0.8;
+  let opacityVal = 0.7;
   // go through every particle
   for (let a = 0; a < particleArr.length; a++) {
     // going through consecutive particles in array
@@ -254,8 +285,8 @@ function connect() {
 
       // the smaller the number, the longer the lines,
       // the more particles connected
-      if (dist < (cnv.width / 5) * (cnv.height / 5)) {
-        opacityVal = 0.7 - dist / 7000;
+      if (dist < (cnv.width / 2) * (cnv.height / 2)) {
+        opacityVal = 0.7 - dist / 9000;
         ctx.strokeStyle = "rgba(51, 65, 57," + opacityVal + ")";
         ctx.lineWidth = 1;
         //console.log(ctx.lineWidth);
@@ -268,29 +299,7 @@ function connect() {
   }
 }
 
-cnv.addEventListener("onclick", cnvClicked());
-
-function cnvClicked() {
-  console.log("screen clicked");
-  // change colour index
-  let newColi = Math.floor(Math.random() * colours.length);
-  // update coli
-  coli = newColi;
-  console.log(coli);
-
-  //init();
-}
-
 // ----------------------------------------------------------------------- //
-
-// // create a torus knot
-// const geometry = new THREE.TorusKnotGeometry(5, 4.7, 41, 15, 14, 4);
-// const mesh = new THREE.Mesh(geometry, shaderMaterial);
-// scene.add(mesh);
-
-// // add light
-// const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-// scene.add(ambientLight);
 
 // ANIMATION LOOP
 function animate() {
@@ -302,8 +311,10 @@ function animate() {
   //   ctx.fillRect(0, 0, innerWidth, innerHeight);
 
   // shader update
-  shaderMaterial.uniforms.u_time.value = clock.getElapsedTime();
+  shaderMaterial.uniforms.u_time.value = clock.getElapsedTime() * 0.001;
   renderer.render(scene, camera);
+
+  // controls.update();
 
   // update each star particle
   particleArr.forEach((e) => {
@@ -334,7 +345,45 @@ onresize = () => {
 
 // mouse out event
 // particles stop trying to interact with mouse when it leaves canvas
-window.addEventListener("mouseout", function () {
+window.addEventListener("mouseout", function (mouse_event) {
   mouse.x = undefined;
   mouse.y = undefined;
 });
+
+// new var to hold new colour index
+let newColi;
+cnv.addEventListener("click", function cnvClicked() {
+  console.log("screen clicked");
+  // COLOUR
+  // change colour index
+  coli = coliRandomiser();
+  console.log(coli);
+
+  // SOUND
+  if (audioContext.state == "suspended") {
+    audioContext.resume();
+  } else {
+    audioE.play();
+    let soundRatio = mouse.x / cnv.width;
+
+    gainNode.gain.value = soundRatio;
+  }
+});
+
+// FUNC: RANDOM COLOUR INDEX
+function coliRandomiser() {
+  // compute random colour index
+  newColi = Math.floor(Math.random() * colours.length);
+
+  // if the new random index == the current index number
+  // call the function again to get a new random index number
+  // that is different
+  if (newColi == coli) {
+    console.log("call recursive");
+    return coliRandomiser();
+  } else {
+    // return new random index
+    //randCol= r;
+    return newColi;
+  }
+}
