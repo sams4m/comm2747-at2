@@ -1,5 +1,6 @@
 import { drawStar } from "/drawStar.js";
 import { colours } from "./colour.js";
+import { shaderMaterial } from "./shader.js";
 import * as THREE from "/three.js";
 import { OrbitControls } from "/OrbitControls.js";
 
@@ -18,7 +19,7 @@ const ctx = cnv.getContext(`2d`);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x7252dc);
 const camera = new THREE.PerspectiveCamera(
-  70,
+  50,
   cnv.width / cnv.height,
   0.01,
   10
@@ -66,55 +67,6 @@ let particleArr = [],
   coli = 0,
   mesh;
 
-// ----------------------------------------------------------------------- //
-// SHADER MATERIAL
-const shaderMaterial = new THREE.ShaderMaterial({
-  uniforms: {
-    u_time: { value: 0.0 },
-  },
-  vertexShader: `
-   uniform float u_time;
-   varying vec3 vNormal;
-   varying vec3 vPosition;
-   
-         void main() {
-           vNormal = normal;
-   
-           // Animate the vertices
-           vec3 newPosition = position;
-           float displacement = sin(position.y * 18.0 + u_time * 2.0) * 0.1;
-           newPosition += normal * displacement;
-   
-           vPosition = newPosition;
-           gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-         }
-   
-   `,
-  fragmentShader: `
-   uniform float u_time;
-   varying vec3 vNormal;
-   varying vec3 vPosition;
-   
-         void main() {
-           // Create a color based on the position and normal
-           // multiplying vpos and vec3 makes the pattern and phases more intense
-           // creating a moire effect
-           vec3 color = 1.0 + 1.5 * sin(u_time * vPosition * 2.0 * vec3(0, 5, 4));
-           // vec3 color = 1.0 - (((u_time % 9) % 1) + vPosition + vec3(0, 5, 4));
-   
-   
-           // Add some shading based on the normals
-           float lighting = dot(normalize(vNormal), normalize(vec3(1.0, 1.0, 1.0)));
-           lighting = 0.1 + lighting * 0.5;
-   
-           gl_FragColor = vec4(color * lighting, 1.0);
-         }
-   
-   `,
-  side: THREE.DoubleSide,
-});
-
-// ----------------------------------------------------------------------- //
 // MOUSE OBJ; tracks mouse x, y coord
 // grab mouse position
 let mouse = {
@@ -136,6 +88,7 @@ window.addEventListener("mousemove", function (event) {
 // CLASS: PARTICLE
 class Particle {
   constructor(x, y, dirX, dirY, size, npoint) {
+    // movement related properties
     // x coordinate
     this.x = x;
     // y coordinate
@@ -146,10 +99,20 @@ class Particle {
     this.dirY = dirY;
     // particle size
     this.size = size;
-    // number of points on star
-    this.n = npoint;
+
+    // glitch related properties
+    // set initial state to false
+    this.isGlitching = false;
+    // set initial time using Three.js clock
+    const startTime = clock.getElapsedTime() * 1000;
+    // set first glitch to happen between 2 - 10 seconds from now
+    this.nextGlitchTime = startTime + (Math.random() * (60000 - 2000) + 2000);
+    // defined when glitching starts
+    this.glitchEndTime = 0;
 
     // star particle
+    // number of points on star
+    this.n = npoint;
     this.starParticle = new drawStar(
       this.x,
       this.y,
@@ -158,7 +121,9 @@ class Particle {
       this.n
     );
 
-    // Configure star oscillation
+    // star oscillation
+    // setOscillation(minScale 0.7,
+    // maxScale random val between 2.5 and 3, frequency)
     this.starParticle.setOscillation(
       0.7,
       Math.random() * (3 - 2.5) + 2.5,
@@ -168,19 +133,54 @@ class Particle {
 
   // method to draw an individual particle
   draw() {
-    // colour
-    let colour = "#" + colours[coli];
-    ctx.fillStyle = colour;
+    // only draw if not glitching
+    if (!this.isGlitching) {
+      // colour
+      let colour = "#" + colours[coli];
+      ctx.fillStyle = colour;
 
-    // Update star position to match particle
-    this.starParticle.cx = this.x;
-    this.starParticle.cy = this.y;
+      // Update star position to match particle
+      this.starParticle.cx = this.x;
+      this.starParticle.cy = this.y;
 
-    this.starParticle.update();
+      // calling update
+      this.starParticle.update();
+    }
+  }
+
+  // METHOD: glitch effect
+  glitchHandle() {
+    // get current time in ms
+    const currentTime = clock.getElapsedTime() * 1000;
+
+    // if currently glitching
+    if (this.isGlitching) {
+      // check if glitch duration is over by comparing timestamps
+      // if more than duration (end time)
+      if (currentTime > this.glitchEndTime) {
+        // glitch = false
+        this.isGlitching = false;
+        // set next glitch time in 2 - 10 seconds
+        this.nextGlitchTime =
+          currentTime + (Math.random() * (60000 - 2000) + 2000);
+      }
+    }
+    // if not glitching - check if time to glitch
+    // if current time stamp is greater than next glitch time
+    // means should be glitching
+    else if (currentTime > this.nextGlitchTime) {
+      this.isGlitching = true;
+      // set glitch end time; random between 2 - 10 seconds
+      this.glitchEndTime =
+        currentTime + (Math.random() * (60000 - 2000) + 2000);
+    }
   }
 
   // check particle pos, mouse pos, move the particle and draw
   update() {
+    // call glitch handle method
+    glitchHandle(this.isGlitching, this.glitchEndTime, this.nextGlitchTime);
+
     // check particle is still within canvas
     if (this.x > cnv.width || this.x < 0) {
       // turn direction around
@@ -271,11 +271,6 @@ function init() {
   if (mesh) scene.remove(mesh);
   scene.add(mesh);
 
-  // create plane
-  //   const geometry = new THREE.PlaneGeometry(1.6, 0.9);
-  //   const mesh = new THREE.Mesh(geometry, shaderMaterial);
-  //   scene.add(mesh);
-
   // add light
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
@@ -287,8 +282,12 @@ function connect() {
   let opacityVal = 0.7;
   // go through every particle
   for (let a = 0; a < particleArr.length; a++) {
+    // if star is glitching skip
+    if (particleArr[a].isGlitching) continue;
     // going through consecutive particles in array
     for (let b = 0; b < particleArr.length; b++) {
+      // if star is glitching skip
+      if (particleArr[b].isGlitching) continue;
       let dist =
         (particleArr[a].x - particleArr[b].x) *
           (particleArr[a].x - particleArr[b].x) +
@@ -315,20 +314,13 @@ function connect() {
 
 // ANIMATION LOOP
 function animate() {
-  // BACKGROUND STYLE
-  // clearing previous frame
-  //   ctx.clearRect(0, 0, innerWidth, innerHeight);
-  //   //ctx.fillStyle = "rgb(255 141 161)";
-  //   ctx.fillStyle = "#7252DC";
-  //   ctx.fillRect(0, 0, innerWidth, innerHeight);
-
   // Rotate three.js scene
   if (mesh) {
     mesh.rotation.x += 0.005;
     mesh.rotation.y += 0.01;
   }
 
-  // shader update
+  // updating uniform var in shader with the elapsed time of animation
   shaderMaterial.uniforms.u_time.value = clock.getElapsedTime();
   // render scene
   renderer.render(scene, camera);
