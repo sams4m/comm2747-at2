@@ -464,11 +464,6 @@ function globalGlitchHandle() {
       // re-initialize everything
       init();
 
-      // updating uniform var in shader with the elapsed time of animation
-      shaderMaterial.uniforms.u_time.value = clock.getElapsedTime();
-      // render scene
-      renderer.render(scene, camera);
-
       // Set next global glitch time - random val between 30-90 seconds
       nextGlobalGlitchTime =
         currentTime + (Math.random() * (90000 - 30000) + 30000);
