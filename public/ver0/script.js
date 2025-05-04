@@ -171,9 +171,9 @@ function init() {
     let y =
       Math.random() * (cnv.height - size * 2 - (0 + size * 2)) + 0 + size * 2;
 
-    // particle movement speed between -0.5 and 0.5
-    let dirX = Math.random() * (1 + 0.5) - 0.5;
-    let dirY = Math.random() * (1 + 0.5) - 0.5;
+    // particle movement speed between -0.5 and 2.5
+    let dirX = Math.random() * (2.5 + 0.5) - 0.5;
+    let dirY = Math.random() * (2.5 + 0.5) - 0.5;
 
     // number of points on star
     // random value between 7 and 15
@@ -223,7 +223,7 @@ function animate() {
   //clearing previous frame
   ctx.clearRect(0, 0, innerWidth, innerHeight);
   //ctx.fillStyle = "rgb(255 141 161)";
-  ctx.fillStyle = "#7252DC";
+  ctx.fillStyle = "cornsilk";
   ctx.fillRect(0, 0, innerWidth, innerHeight);
 
   // update each star particle
