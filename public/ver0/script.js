@@ -1,7 +1,5 @@
 import { drawStar } from "/drawStar.js";
 import { colours } from "./colour.js";
-import * as THREE from "/three.js";
-import { OrbitControls } from "/OrbitControls.js";
 
 // document styling
 document.body.style.margin = 0;

@@ -1,21 +1,26 @@
+// ----------------------------------------------------------------------- //
+// IMPORTS
 import { drawStar } from "/drawStar.js";
 import { colours } from "./colour.js";
 import { shaderMaterial } from "./shader.js";
 import * as THREE from "/three.js";
-import { OrbitControls } from "/OrbitControls.js";
 
+// ----------------------------------------------------------------------- //
+// SET UP
 // document styling
 document.body.style.margin = 0;
 document.body.style.overflow = `hidden`;
 
 // setting up canvas
 const cnv = document.getElementById(`canvas`);
+// setting canvas width + height to window width + height
 cnv.width = window.innerWidth;
 cnv.height = window.innerHeight;
 
+// getting the 2d context to draw on
 const ctx = cnv.getContext(`2d`);
 
-// Set up scene
+// setting up 3D scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x7252dc);
 const camera = new THREE.PerspectiveCamera(
@@ -25,22 +30,24 @@ const camera = new THREE.PerspectiveCamera(
   10
 );
 camera.position.z = 2;
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+// declaring time stamp
 const clock = new THREE.Clock();
 
 // Setup renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 // size of renderer
 renderer.setSize(window.innerWidth, window.innerHeight);
+// adding renderer to dom
 document.body.appendChild(renderer.domElement);
 
-// styling
+// renderer styling
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "-1";
 
 // ----------------------------------------------------------------------- //
-// sound
+// SOUND
 const audioContext = new AudioContext();
 // suspend until click
 audioContext.suspend();
@@ -59,15 +66,16 @@ gainNode.gain.value = 0.5;
 
 // ----------------------------------------------------------------------- //
 // GLOBAL VARS
+// declaring vars for: particle array, colour index, mesh, glitch colour index
 let particleArr = [],
   coli = 0,
   mesh,
   glitchCol;
 
-// global glitch vars
+// GLOBAL GLITCH
 // set default as not glitching
 let globalGlitchEvent = false;
-// glitch in 10-25 seconds
+// initialise glitch in 10-25 seconds
 let nextGlobalGlitchTime =
   clock.getElapsedTime() * 1000 + (Math.random() * 15000 + 10000);
 // initialise end time = 0
@@ -119,6 +127,7 @@ class Particle {
     // star particle
     // number of points on star
     this.n = npoint;
+    // calling class to create a new iteration of star
     this.starParticle = new drawStar(
       this.x,
       this.y,
@@ -162,13 +171,16 @@ class Particle {
     // if currently glitching
     if (this.isGlitching) {
       // check if glitch duration is over by comparing timestamps
-      // if more than duration (end time)
+      // if more than end time means glitch period ended
       if (currentTime > this.glitchEndTime) {
         // glitch = false
         this.isGlitching = false;
         // set next glitch time in 2 - 10 seconds
         this.nextGlitchTime =
           currentTime + (Math.random() * (60000 - 2000) + 2000);
+        // set a new x and y coord within canvas with 5px boundary
+        this.x = Math.random() * (cnv.width - 5 - 5 + 5);
+        this.y = Math.random() * (cnv.height - 5 - 5 + 5);
       }
     }
     // if not glitching - check if time to glitch
