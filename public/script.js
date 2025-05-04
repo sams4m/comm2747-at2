@@ -187,8 +187,7 @@ class Particle {
     let g = parseInt(colour.slice(3, 5), 16);
     let b = parseInt(colour.slice(5, 7), 16);
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${this.opacity})`;
-    // colour
-    let colour = "#" + colours[coli];
+
     ctx.fillStyle = colour;
 
     // Update star position to match particle
