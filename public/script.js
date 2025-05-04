@@ -36,7 +36,7 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
-renderer.domElement.style.zIndex = "-1";
+renderer.domElement.style.zIndex = "1";
 
 // set up orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
