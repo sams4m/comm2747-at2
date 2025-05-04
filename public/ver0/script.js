@@ -13,22 +13,6 @@ cnv.height = window.innerHeight;
 const ctx = cnv.getContext(`2d`);
 
 // ----------------------------------------------------------------------- //
-// sound
-const audioContext = new AudioContext();
-// suspend until click
-audioContext.suspend();
-// volume controls
-const gainNode = audioContext.createGain();
-// audio
-const audioE = new Audio("/weird.wav");
-audioE.load();
-const source = audioContext.createMediaElementSource(audioE);
-// connect audio element to gain node
-source.connect(gainNode);
-// Connect Gain Node to Destination
-gainNode.connect(audioContext.destination);
-// preset value ; set at 50%
-gainNode.gain.value = 0.5;
 
 // vars
 let particleArr = [];
