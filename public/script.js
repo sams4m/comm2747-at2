@@ -308,7 +308,7 @@ function animate() {
   // if global glitch is active
   if (globalGlitchEvent === true) {
     // setting background as random colour
-    glitchCol = coliRandomiser();
+    glitchCol = coliRandomiser(glitchCol);
     // clearing rect frame
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     // colour
@@ -375,7 +375,7 @@ cnv.addEventListener("click", function cnvClicked() {
   console.log("screen clicked");
   // COLOUR
   // change colour index
-  coli = coliRandomiser();
+  coli = coliRandomiser(coli);
   console.log(coli);
 
   // GLITCH (20% CHANCE)
@@ -436,16 +436,16 @@ function connect() {
 
 // ----------------------------------------------------------------------- //
 // FUNC: RANDOM COLOUR INDEX
-function coliRandomiser() {
+function coliRandomiser(i) {
   // compute random colour index
-  newColi = Math.floor(Math.random() * colours.length);
+  let newColi = Math.floor(Math.random() * colours.length);
 
   // if the new random index == the current index number
   // call the function again to get a new random index number
   // that is different
-  if (newColi == coli) {
+  if (newColi == i) {
     console.log("call recursive");
-    return coliRandomiser();
+    return coliRandomiser(newColi);
   } else {
     // return new random index
     //randCol= r;
