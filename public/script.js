@@ -570,7 +570,7 @@ function coliRandomiser(i) {
     return coliRandomiser(i);
   } else {
     // return new random index
-    //randCol= r;
+    //newCol= r;
     return newColi;
   }
 }
