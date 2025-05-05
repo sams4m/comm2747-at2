@@ -105,7 +105,7 @@ function toggleSound() {
 }
 
 // anonymous function click handler
-div.onclick = () => {
+cnv.onclick = () => {
   // if the audio context is still suspended
   // resume the audio context first
   if (audioContext.state != "running") init_audio();
