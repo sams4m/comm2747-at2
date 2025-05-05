@@ -53,9 +53,13 @@ const audioContext = new AudioContext();
 audioContext.suspend();
 
 // define an async click handler function
-async function init_audio() {
+async function initAudio() {
   // wait for audio context to resume
   await audioContext.resume();
+  // play audio element
+  audioE.play();
+  // set looping to true
+  audioE.loop = true;
 }
 
 // volume controls
@@ -108,7 +112,7 @@ function toggleSound() {
 cnv.onclick = () => {
   // if the audio context is still suspended
   // resume the audio context first
-  if (audioContext.state != "running") init_audio();
+  if (audioContext.state != "running") initAudio();
 
   // then call the toggle sound function
   toggleSound();
