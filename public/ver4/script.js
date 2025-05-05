@@ -51,17 +51,10 @@ renderer.domElement.style.zIndex = "-1";
 const audioContext = new AudioContext();
 // suspend until click
 audioContext.suspend();
-
-// define an async click handler function
-async function init_audio() {
-  // wait for audio context to resume
-  await audioContext.resume();
-}
-
 // volume controls
 const gainNode = audioContext.createGain();
 // audio
-const audioE = new Audio("weird.wav");
+const audioE = new Audio("/weird.wav");
 audioE.load();
 const source = audioContext.createMediaElementSource(audioE);
 // connect audio element to gain node
@@ -70,79 +63,6 @@ source.connect(gainNode);
 gainNode.connect(audioContext.destination);
 // preset value ; set at 50%
 gainNode.gain.value = 0.5;
-
-// amplitude modulation variables
-let modulationStartTime = 0;
-// 1/24 Hz frequency
-const modulationFrequency = 1 / 4;
-
-// TOGGLE SOUND
-// define a sound status var
-let soundStatus = false;
-
-// toggle sound function
-function toggleSound() {
-  // if sound status value is off
-  if (soundStatus === false) {
-    // modulation start time
-    modulationStartTime = audioContext.currentTime;
-
-    // set the value to true
-    soundStatus = true;
-
-    let soundRatio = mouse.x / cnv.width;
-
-    gainNode.gain.value = gainNode.gain.value * soundRatio;
-
-    // start amplitude modulation
-    modulateAmplitude();
-  }
-  // if sound status value is on
-  else if (soundStatus === true) {
-    // set the value to false
-    soundStatus = false;
-  }
-}
-
-// anonymous function click handler
-div.onclick = () => {
-  // if the audio context is still suspended
-  // resume the audio context first
-  if (audioContext.state != "running") init_audio();
-
-  // then call the toggle sound function
-  toggleSound();
-};
-
-// function to apply amplitude modulation
-function modulateAmplitude() {
-  // declaring time now when function called
-  const now = audioContext.currentTime;
-  // calculating elapsed time
-  const elapsedTime = now - modulationStartTime;
-
-  // modulation - creates values between 0 and 1
-  // starting from the middle 0.5
-  // sin produces a wave between -1 and 1
-  // therefore * 0.5 to make it -0.5 to 0.5
-  // +0.5 makes ot 0 to 1
-  // angle = 2 * Math.PI * modulationFrequency * elapsedTime
-  // 2 * Math.PI = full circle
-  // modulationFrequecy = 1/24 means we complete a cycle every 24 s
-  // elapsedTime = time since we started oscillation
-  const modulation =
-    0.5 + 0.5 * Math.sin(2 * Math.PI * modulationFrequency * elapsedTime);
-
-  // apply to gain (with base amplitude of 0.2)
-  gainNode.gain.value = 0.2 * modulation;
-
-  // next modulation update
-  if (soundStatus === true) {
-    requestAnimationFrame(modulateAmplitude);
-  } else {
-    gainNode.gain.value = 0;
-  }
-}
 
 // ----------------------------------------------------------------------- //
 // GLOBAL VARS
@@ -466,6 +386,16 @@ cnv.addEventListener("click", function cnvClicked() {
     // set a random end time between 500-1500ms
     globalGlitchEndTime =
       clock.getElapsedTime() * 1000 + (Math.random() * (1500 - 500) + 500);
+  }
+
+  // SOUND
+  if (audioContext.state == "suspended") {
+    audioContext.resume();
+  } else {
+    audioE.play();
+    let soundRatio = mouse.x / cnv.width;
+
+    gainNode.gain.value = soundRatio;
   }
 });
 
