@@ -64,9 +64,11 @@ async function initAudio() {
 
 // volume controls
 const gainNode = audioContext.createGain();
-// audio
+// audio element
 const audioE = new Audio("weird.wav");
+// pre load sound immediatly
 audioE.load();
+// declare source var
 const source = audioContext.createMediaElementSource(audioE);
 // connect audio element to gain node
 source.connect(gainNode);
