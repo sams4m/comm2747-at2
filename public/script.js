@@ -79,8 +79,8 @@ gainNode.gain.value = 0.5;
 
 // amplitude modulation variables
 let modulationStartTime = 0;
-// 1/24 Hz frequency
-const modulationFrequency = 1 / 4;
+// 1 / random value between 2-7 Hz frequency
+const modulationFrequency = (1 / Math.random()) * (7 - 2 + 2);
 
 // TOGGLE SOUND
 // define a sound status var
