@@ -1,10 +1,15 @@
-// setting up canvas
+// COMM2747 Creative Coding Assignment 2
+// Written by: Samantha Lugay
+// Student Number: s4087814
+// ----------------------------------------------------------------------- //
+// defining canvas
 const cnv = document.getElementById(`canvas`);
 cnv.width = window.innerWidth;
 cnv.height = window.innerHeight;
 
 const ctx = cnv.getContext(`2d`);
 
+//class
 class drawStar {
   constructor(cx, cy, r1, r2, n) {
     // original x coord

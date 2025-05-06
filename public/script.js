@@ -1,3 +1,6 @@
+// COMM2747 Creative Coding Assignment 2
+// Written by: Samantha Lugay
+// Student Number: s4087814
 // ----------------------------------------------------------------------- //
 // IMPORTS
 import { drawStar } from "/drawStar.js";
