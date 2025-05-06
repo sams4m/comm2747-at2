@@ -433,7 +433,7 @@ init();
 animate();
 
 // ----------------------------------------------------------------------- //
-// web responsive
+// WEB RESPONSIVE
 onresize = () => {
   cnv.width = innerWidth;
   cnv.height = innerHeight;
